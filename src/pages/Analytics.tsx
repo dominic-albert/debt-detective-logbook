@@ -153,7 +153,7 @@ const Analytics: React.FC = () => {
                   <XAxis dataKey="severity" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="count" fill={(entry) => SEVERITY_COLORS[entry?.severity as keyof typeof SEVERITY_COLORS] || '#8884d8'}>
+                  <Bar dataKey="count">
                     {severityData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={SEVERITY_COLORS[entry.severity as keyof typeof SEVERITY_COLORS]} />
                     ))}
