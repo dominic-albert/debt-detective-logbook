@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mockDebts } from '../data/mockData';
@@ -17,7 +16,7 @@ const DebtDetail: React.FC = () => {
   const { toast } = useToast();
   
   const debt = mockDebts.find(d => d.id === id);
-  const [status, setStatus] = useState(debt?.status || 'Open');
+  const [status, setStatus] = useState<'Open' | 'In Progress' | 'Resolved'>(debt?.status || 'Open');
   const [isEditing, setIsEditing] = useState(false);
 
   if (!debt) {
@@ -36,6 +35,10 @@ const DebtDetail: React.FC = () => {
       title: "Status Updated",
       description: `Entry status has been changed to ${status}.`,
     });
+  };
+
+  const handleStatusChange = (value: string) => {
+    setStatus(value as 'Open' | 'In Progress' | 'Resolved');
   };
 
   const formatDate = (dateString: string) => {
@@ -161,7 +164,7 @@ const DebtDetail: React.FC = () => {
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
                   Update Status
                 </label>
-                <Select value={status} onValueChange={setStatus}>
+                <Select value={status} onValueChange={handleStatusChange}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

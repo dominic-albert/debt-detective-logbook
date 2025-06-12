@@ -37,12 +37,12 @@ const FilterBar: React.FC<FilterBarProps> = ({ filters, onFiltersChange }) => {
 
         {/* Project Filter */}
         <div className="w-full lg:w-48">
-          <Select value={filters.projects[0] || ''} onValueChange={(value) => handleFilterChange('projects', value)}>
+          <Select value={filters.projects[0] || 'all'} onValueChange={(value) => handleFilterChange('projects', value === 'all' ? '' : value)}>
             <SelectTrigger>
               <SelectValue placeholder="All Projects" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Projects</SelectItem>
+              <SelectItem value="all">All Projects</SelectItem>
               {mockProjects.map((project) => (
                 <SelectItem key={project.id} value={project.name}>
                   {project.name}
@@ -54,12 +54,12 @@ const FilterBar: React.FC<FilterBarProps> = ({ filters, onFiltersChange }) => {
 
         {/* Severity Filter */}
         <div className="w-full lg:w-32">
-          <Select value={filters.severity} onValueChange={(value) => handleFilterChange('severity', value)}>
+          <Select value={filters.severity || 'all'} onValueChange={(value) => handleFilterChange('severity', value === 'all' ? '' : value)}>
             <SelectTrigger>
               <SelectValue placeholder="Severity" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All</SelectItem>
+              <SelectItem value="all">All</SelectItem>
               <SelectItem value="High">High</SelectItem>
               <SelectItem value="Medium">Medium</SelectItem>
               <SelectItem value="Low">Low</SelectItem>
@@ -69,12 +69,12 @@ const FilterBar: React.FC<FilterBarProps> = ({ filters, onFiltersChange }) => {
 
         {/* Type Filter */}
         <div className="w-full lg:w-40">
-          <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
+          <Select value={filters.type || 'all'} onValueChange={(value) => handleFilterChange('type', value === 'all' ? '' : value)}>
             <SelectTrigger>
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="Visual">Visual</SelectItem>
               <SelectItem value="Accessibility">Accessibility</SelectItem>
               <SelectItem value="Copy">Copy</SelectItem>
@@ -85,12 +85,12 @@ const FilterBar: React.FC<FilterBarProps> = ({ filters, onFiltersChange }) => {
 
         {/* Status Filter */}
         <div className="w-full lg:w-36">
-          <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
+          <Select value={filters.status || 'all'} onValueChange={(value) => handleFilterChange('status', value === 'all' ? '' : value)}>
             <SelectTrigger>
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="Open">Open</SelectItem>
               <SelectItem value="In Progress">In Progress</SelectItem>
               <SelectItem value="Resolved">Resolved</SelectItem>
