@@ -55,6 +55,22 @@ const DebtEntryModal: React.FC<DebtEntryModalProps> = ({
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        setFormData(prev => ({ ...prev, screenshot: result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeScreenshot = () => {
+    setFormData(prev => ({ ...prev, screenshot: '' }));
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
