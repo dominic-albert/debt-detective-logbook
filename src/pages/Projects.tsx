@@ -1,15 +1,20 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FolderOpen, Calendar } from 'lucide-react';
+import { Plus, FolderOpen, Calendar, MoreVertical, Edit, Trash } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface Project {
   id: string;
@@ -24,6 +29,8 @@ interface Project {
 const Projects: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [newProject, setNewProject] = useState({ name: '', description: '' });
   const navigate = useNavigate();
 
@@ -108,6 +115,44 @@ const Projects: React.FC = () => {
     return project.openCount + project.inProgressCount + project.resolvedCount;
   };
 
+  const handleEditProject = (project: Project) => {
+    setEditingProject(project);
+    setNewProject({ name: project.name, description: project.description });
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateProject = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProject.name.trim() || !editingProject) return;
+
+    const updatedProjects = projects.map(project =>
+      project.id === editingProject.id
+        ? { ...project, name: newProject.name, description: newProject.description }
+        : project
+    );
+    
+    setProjects(updatedProjects);
+    localStorage.setItem('uxDebtProjects', JSON.stringify(updatedProjects));
+    
+    setNewProject({ name: '', description: '' });
+    setEditingProject(null);
+    setIsEditModalOpen(false);
+  };
+
+  const handleDeleteProject = (projectId: string) => {
+    const updatedProjects = projects.filter(project => project.id !== projectId);
+    setProjects(updatedProjects);
+    localStorage.setItem('uxDebtProjects', JSON.stringify(updatedProjects));
+    
+    // Also remove associated debts
+    const savedDebts = localStorage.getItem('uxDebts');
+    if (savedDebts) {
+      const debts = JSON.parse(savedDebts);
+      const filteredDebts = debts.filter((debt: any) => debt.projectId !== projectId);
+      localStorage.setItem('uxDebts', JSON.stringify(filteredDebts));
+    }
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -161,19 +206,80 @@ const Projects: React.FC = () => {
           </Dialog>
         </div>
 
+        {/* Edit Project Modal */}
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Project</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleUpdateProject} className="space-y-4">
+              <div>
+                <Label htmlFor="editProjectName">Project Name</Label>
+                <Input
+                  id="editProjectName"
+                  value={newProject.name}
+                  onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+                  placeholder="Enter project name"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="editProjectDescription">Description</Label>
+                <Textarea
+                  id="editProjectDescription"
+                  value={newProject.description}
+                  onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                  placeholder="Brief description of the project"
+                  rows={3}
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Update Project</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card key={project.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg line-clamp-2">{project.name}</CardTitle>
-                  <Badge variant="outline" className="text-xs">
-                    {getTotalCount(project)} items
-                  </Badge>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg line-clamp-2">{project.name}</CardTitle>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEditProject(project)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Rename Project
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleDeleteProject(project.id)}
+                            className="text-red-600"
+                          >
+                            <Trash className="h-4 w-4 mr-2" />
+                            Delete Project
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <Badge variant="outline" className="text-xs mt-2">
+                      {getTotalCount(project)} items
+                    </Badge>
+                  </div>
                 </div>
                 {project.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
+                  <p className="text-sm text-gray-600 line-clamp-2 mt-2">{project.description}</p>
                 )}
               </CardHeader>
               <CardContent>
