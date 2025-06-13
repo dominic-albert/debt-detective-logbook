@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FolderOpen, LogOut, Calendar } from 'lucide-react';
+import { Plus, FolderOpen, LogOut, Calendar, User, Settings, BarChart3 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -96,10 +95,6 @@ const Projects: React.FC = () => {
     navigate('/auth');
   };
 
-  const handleProjectClick = (projectId: string) => {
-    navigate(`/project/${projectId}`);
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -112,21 +107,40 @@ const Projects: React.FC = () => {
     return project.openCount + project.inProgressCount + project.resolvedCount;
   };
 
+  const handleProjectClick = (projectId: string) => {
+    navigate(`/project/${projectId}`);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-violet-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <FolderOpen className="h-8 w-8 text-red-600 mr-3" />
-              <h1 className="text-xl font-semibold text-gray-900">Projects</h1>
+              <FolderOpen className="h-8 w-8 text-violet-600 mr-3" />
+              <h1 className="text-xl font-semibold text-violet-900">UX Debt Tracker</h1>
             </div>
             
             <div className="flex items-center space-x-4">
+              <Button variant="ghost" onClick={() => navigate('/analytics')} className="text-violet-700 hover:text-violet-900">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
+              </Button>
+              
+              <Button variant="ghost" className="text-violet-700 hover:text-violet-900">
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Button>
+              
+              <Button variant="ghost" className="text-violet-700 hover:text-violet-900">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
+
               <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
                 <DialogTrigger asChild>
-                  <Button>
+                  <Button className="bg-violet-600 hover:bg-violet-700">
                     <Plus className="h-4 w-4 mr-2" />
                     New Project
                   </Button>
@@ -166,7 +180,7 @@ const Projects: React.FC = () => {
                 </DialogContent>
               </Dialog>
 
-              <Button variant="outline" onClick={handleLogout}>
+              <Button variant="outline" onClick={handleLogout} className="border-violet-300 text-violet-700 hover:bg-violet-50">
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
@@ -178,23 +192,23 @@ const Projects: React.FC = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Your Projects</h2>
-          <p className="text-gray-600">Select a project to view and manage UX debt entries</p>
+          <h2 className="text-2xl font-semibold text-violet-900 mb-2">Your Projects</h2>
+          <p className="text-violet-700">Select a project to view and manage UX debt entries</p>
         </div>
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card key={project.id} className="hover:shadow-xl transition-all duration-200 border-violet-200 hover:border-violet-300 bg-white/70 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg line-clamp-2">{project.name}</CardTitle>
-                  <Badge variant="outline" className="text-xs">
+                  <CardTitle className="text-lg line-clamp-2 text-violet-900">{project.name}</CardTitle>
+                  <Badge variant="outline" className="text-xs border-violet-300 text-violet-700">
                     {getTotalCount(project)} items
                   </Badge>
                 </div>
                 {project.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
+                  <p className="text-sm text-violet-600 line-clamp-2">{project.description}</p>
                 )}
               </CardHeader>
               <CardContent>
@@ -202,43 +216,43 @@ const Projects: React.FC = () => {
                   {/* Status Counts */}
                   <div className="flex justify-between text-sm">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                      <span>Open: {project.openCount}</span>
+                      <div className="w-3 h-3 bg-red-400 rounded-full mr-2"></div>
+                      <span className="text-violet-700">Open: {project.openCount}</span>
                     </div>
                     <div className="flex items-center">
-                      <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
-                      <span>In Progress: {project.inProgressCount}</span>
+                      <div className="w-3 h-3 bg-amber-400 rounded-full mr-2"></div>
+                      <span className="text-violet-700">Progress: {project.inProgressCount}</span>
                     </div>
                     <div className="flex items-center">
-                      <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                      <span>Resolved: {project.resolvedCount}</span>
+                      <div className="w-3 h-3 bg-emerald-400 rounded-full mr-2"></div>
+                      <span className="text-violet-700">Done: {project.resolvedCount}</span>
                     </div>
                   </div>
 
                   {/* Last Updated */}
-                  <div className="flex items-center text-xs text-gray-500">
+                  <div className="flex items-center text-xs text-violet-500">
                     <Calendar className="h-3 w-3 mr-1" />
                     Created {formatDate(project.createdAt)}
                   </div>
 
                   {/* Actions */}
-                  <div className="flex space-x-2 pt-2">
-                    <Button
+                  <div className="flex justify-between items-center pt-2">
+                    <button
                       onClick={() => handleProjectClick(project.id)}
-                      className="flex-1"
-                      size="sm"
+                      className="text-violet-600 hover:text-violet-800 text-sm font-medium underline-offset-2 hover:underline transition-colors"
                     >
-                      View Details
-                    </Button>
+                      View Details (Kanban & List)
+                    </button>
                     <Button
                       onClick={() => {
-                        // TODO: Open debt entry modal for this project
                         handleProjectClick(project.id);
                       }}
                       variant="outline"
                       size="sm"
+                      className="border-violet-300 text-violet-700 hover:bg-violet-50"
                     >
-                      <Plus className="h-3 w-3" />
+                      <Plus className="h-3 w-3 mr-1" />
+                      New Debt
                     </Button>
                   </div>
                 </div>
@@ -249,10 +263,10 @@ const Projects: React.FC = () => {
 
         {projects.length === 0 && (
           <div className="text-center py-12">
-            <FolderOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No projects yet</h3>
-            <p className="text-gray-600 mb-4">Create your first project to start tracking UX debt</p>
-            <Button onClick={() => setIsCreateModalOpen(true)}>
+            <FolderOpen className="h-12 w-12 text-violet-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-violet-900 mb-2">No projects yet</h3>
+            <p className="text-violet-700 mb-4">Create your first project to start tracking UX debt</p>
+            <Button onClick={() => setIsCreateModalOpen(true)} className="bg-violet-600 hover:bg-violet-700">
               <Plus className="h-4 w-4 mr-2" />
               Create Project
             </Button>
