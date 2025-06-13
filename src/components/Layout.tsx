@@ -1,8 +1,16 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BarChart3, FileText, Plus, Settings, Home } from 'lucide-react';
+import { BarChart3, FileText, Plus, Settings, Home, List, HelpCircle, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,18 +20,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
 
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'New Entry', href: '/new', icon: Plus },
+    { name: 'Projects', href: '/projects', icon: Home },
+    { name: 'Debt List', href: '/debt-list', icon: List },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   const isActivePage = (href: string) => {
-    if (href === '/') {
-      return location.pathname === '/';
+    if (href === '/projects') {
+      return location.pathname === '/projects' || location.pathname === '/';
     }
     return location.pathname.startsWith(href);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('uxDebtUser');
+    window.location.href = '/auth';
+  };
+
+  // Get user info from localStorage
+  const userData = localStorage.getItem('uxDebtUser');
+  const user = userData ? JSON.parse(userData) : null;
+  const userName = user?.email?.split('@')[0] || 'User';
+  const userInitials = userName.substring(0, 2).toUpperCase();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,10 +74,41 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               })}
             </nav>
 
-            <div className="md:hidden">
-              <Button variant="ghost" size="sm">
-                <Settings className="h-5 w-5" />
-              </Button>
+            {/* Profile Section */}
+            <div className="flex items-center space-x-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-2 hover:bg-gray-50">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-red-100 text-red-600">
+                        {userInitials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden md:block text-sm font-medium text-gray-700">
+                      {userName}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem>
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    Help
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

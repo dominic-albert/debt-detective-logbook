@@ -1,10 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
+import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, LineChart, Line, ResponsiveContainer } from 'recharts';
 
 interface UXDebt {
@@ -23,7 +21,6 @@ interface UXDebt {
 }
 
 const Analytics: React.FC = () => {
-  const navigate = useNavigate();
   const [timeFilter, setTimeFilter] = useState('all');
   const [projectFilter, setProjectFilter] = useState('all');
   const [debts, setDebts] = useState<UXDebt[]>([]);
@@ -123,23 +120,16 @@ const Analytics: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16">
-            <Button variant="ghost" onClick={() => navigate('/projects')} className="mr-4">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="text-xl font-semibold text-gray-900">Analytics Dashboard</h1>
-          </div>
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Analytics Dashboard</h1>
+          <p className="text-gray-600">Insights and trends for your UX debt</p>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="w-full sm:w-48">
             <Select value={timeFilter} onValueChange={setTimeFilter}>
               <SelectTrigger>
@@ -170,8 +160,8 @@ const Analytics: React.FC = () => {
           </div>
         </div>
 
-        {/* Summary Stats - Full width cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {/* Summary Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card>
             <CardContent className="p-4">
               <div className="text-2xl font-semibold text-gray-900">
@@ -206,61 +196,65 @@ const Analytics: React.FC = () => {
           </Card>
         </div>
 
-        {/* Charts Grid - Optimize for viewport */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[60vh]">
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Debt by Type */}
-          <Card className="h-full">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Debt by Type</CardTitle>
+          <Card>
+            <CardHeader>
+              <CardTitle>Debt by Type</CardTitle>
             </CardHeader>
-            <CardContent className="h-[calc(100%-80px)]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={typeData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ type, percent }) => `${type} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="count"
-                  >
-                    {typeData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[entry.type as keyof typeof COLORS]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={typeData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ type, percent }) => `${type} ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="count"
+                    >
+                      {typeData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[entry.type as keyof typeof COLORS]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
 
           {/* Debt by Severity */}
-          <Card className="h-full">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Debt by Severity</CardTitle>
+          <Card>
+            <CardHeader>
+              <CardTitle>Debt by Severity</CardTitle>
             </CardHeader>
-            <CardContent className="h-[calc(100%-80px)]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={severityData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="severity" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count">
-                    {severityData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={SEVERITY_COLORS[entry.severity as keyof typeof SEVERITY_COLORS]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={severityData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="severity" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count">
+                      {severityData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={SEVERITY_COLORS[entry.severity as keyof typeof SEVERITY_COLORS]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Bottom Chart - Full width */}
-        <Card className="mt-6">
+        {/* Trend Chart */}
+        <Card>
           <CardHeader>
             <CardTitle>Trend Over Time</CardTitle>
           </CardHeader>
@@ -278,8 +272,8 @@ const Analytics: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 };
 

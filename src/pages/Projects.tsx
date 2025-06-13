@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FolderOpen, LogOut, Calendar } from 'lucide-react';
+import { Plus, FolderOpen, Calendar } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -91,11 +92,6 @@ const Projects: React.FC = () => {
     setIsCreateModalOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('uxDebtUser');
-    navigate('/auth');
-  };
-
   const handleProjectClick = (projectId: string) => {
     navigate(`/project/${projectId}`);
   };
@@ -113,73 +109,56 @@ const Projects: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <FolderOpen className="h-8 w-8 text-red-600 mr-3" />
-              <h1 className="text-xl font-semibold text-gray-900">Projects</h1>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    New Project
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create New Project</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleCreateProject} className="space-y-4">
-                    <div>
-                      <Label htmlFor="projectName">Project Name</Label>
-                      <Input
-                        id="projectName"
-                        value={newProject.name}
-                        onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-                        placeholder="Enter project name"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="projectDescription">Description</Label>
-                      <Textarea
-                        id="projectDescription"
-                        value={newProject.description}
-                        onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                        placeholder="Brief description of the project"
-                        rows={3}
-                      />
-                    </div>
-                    <div className="flex justify-end space-x-2">
-                      <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button type="submit">Create Project</Button>
-                    </div>
-                  </form>
-                </DialogContent>
-              </Dialog>
-
-              <Button variant="outline" onClick={handleLogout}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
-            </div>
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">Your Projects</h1>
+            <p className="text-gray-600">Select a project to view and manage UX debt entries</p>
           </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Your Projects</h2>
-          <p className="text-gray-600">Select a project to view and manage UX debt entries</p>
+          
+          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                New Project
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New Project</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleCreateProject} className="space-y-4">
+                <div>
+                  <Label htmlFor="projectName">Project Name</Label>
+                  <Input
+                    id="projectName"
+                    value={newProject.name}
+                    onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+                    placeholder="Enter project name"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="projectDescription">Description</Label>
+                  <Textarea
+                    id="projectDescription"
+                    value={newProject.description}
+                    onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                    placeholder="Brief description of the project"
+                    rows={3}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Create Project</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Projects Grid */}
@@ -232,7 +211,6 @@ const Projects: React.FC = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        // TODO: Open debt entry modal for this project
                         handleProjectClick(project.id);
                       }}
                       variant="outline"
@@ -258,8 +236,8 @@ const Projects: React.FC = () => {
             </Button>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 };
 
