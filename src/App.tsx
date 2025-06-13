@@ -4,11 +4,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
-import NewEntry from "./pages/NewEntry";
+import Auth from "./pages/Auth";
+import Projects from "./pages/Projects";
+import ProjectDashboard from "./pages/ProjectDashboard";
 import Analytics from "./pages/Analytics";
-import DebtDetail from "./pages/DebtDetail";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -20,16 +19,15 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/new" element={<NewEntry />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/debt/:id" element={<DebtDetail />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          <Route path="/" element={<Projects />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/project/:projectId" element={<ProjectDashboard />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
